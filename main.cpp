@@ -145,7 +145,7 @@ void draw(unsigned char* arr_pixels, int &widht, int &height, int &brightness, d
 }
 
 int main(int argc, char * argv[]) {
-    if (argc != 10){
+    if ((argc > 10) || (argc < 9)){
         cerr << "input data can't be accepted \n";
         return 1;
     }
