@@ -54,7 +54,6 @@ void counter(int& now_s_x, int& now_s_y, double& dist, int& brightness, unsigned
     if ((now_s_x >= 0) && (now_s_x < widht) && (now_s_y >= 0) && (now_s_y < height)) {
         double pix = arr_pix[now_s_y * widht +  now_s_x] / 255.0, br = brightness / 255.0;
         double s2, s;
-        if (line_gamma == 2.4) {
             if (pix <= 0.04045) {
                 s = 25 * pix / 323;
             } else {
@@ -75,10 +74,7 @@ void counter(int& now_s_x, int& now_s_y, double& dist, int& brightness, unsigned
             }
             arr_pix[now_s_y * widht + now_s_x] = round(fin_pix * 255);
         }
-        else {
-            arr_pix[now_s_y * widht + now_s_x] = 255 * pow(pix, line_gamma);
-        }
-    }
+
 }
 
 void processing(int& now_x, int& now_y, double& len_x, double& len_y, double& x1, double& x2, double& y1, double& y2, double& lwidth, unsigned char* arr_pix, int& brightness, double& line_gamma, int& ch) {
