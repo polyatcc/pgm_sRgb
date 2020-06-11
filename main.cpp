@@ -1,19 +1,20 @@
 #include <iostream>
 #include <stdlib.h>
 #include <cmath>
+#include <algorithm>
 
 using namespace std;
 
 int a, widht, height, gamma;
 
-double pow(double x, int power) {
+double pow2(double x, int power) {
     if (power == 1) {
         return x;
     }
     if (power == 0) {
         return 1;
     }
-    return (pow(x * x, power / 2) * ((power % 2 == 0) ? 1 : x));
+    return (pow2(x * x, power / 2) * ((power % 2 == 0) ? 1 : x));
 }
 
 double distance_to(double& len_x, double& len_y, double& x1, double& y1, double& x2, double& y2, int& now_s_x, int& now_s_y, double& line_width) {
@@ -21,11 +22,11 @@ double distance_to(double& len_x, double& len_y, double& x1, double& y1, double&
     double koord_pr_x = (y_x) * x1 + x_y * now_s_x - y1 + now_s_y;
     koord_pr_x = koord_pr_x / (y_x + x_y);
     double koord_pr_y = x_y * ((double)(now_s_x) - koord_pr_x) + now_s_y;
-    double dist_pr = sqrt(pow(koord_pr_x - now_s_x, 2) + pow(koord_pr_y - now_s_y, 2));
+    double dist_pr = sqrt(pow2(koord_pr_x - now_s_x, 2) + pow2(koord_pr_y - now_s_y, 2));
 
     if (koord_pr_x < x1) {
-        double dist_ot = sqrt(pow(x1 - koord_pr_x, 2) + pow(y1 - koord_pr_y, 2));
-        double korrect_dist = sqrt(pow(dist_pr, 2) + pow(dist_ot, 2));
+        double dist_ot = sqrt(pow2(x1 - koord_pr_x, 2) + pow2(y1 - koord_pr_y, 2));
+        double korrect_dist = sqrt(pow2(dist_pr, 2) + pow2(dist_ot, 2));
         if ((line_width + 1) / 2 - korrect_dist > 0) {
             return min((line_width + 1) / 2 - dist_pr, 1 - dist_ot);
         }
@@ -35,8 +36,8 @@ double distance_to(double& len_x, double& len_y, double& x1, double& y1, double&
     if ((koord_pr_x >= x1) && (koord_pr_x <= x2)) {
         return (line_width + 1) / 2 - dist_pr;
     }
-    double dist_ot = sqrt(pow(x2 - koord_pr_x, 2) + pow(y2 - koord_pr_y, 2));
-    double korrect_dist = sqrt(pow(dist_pr, 2) + pow(dist_ot, 2));
+    double dist_ot = sqrt(pow2(x2 - koord_pr_x, 2) + pow2(y2 - koord_pr_y, 2));
+    double korrect_dist = sqrt(pow2(dist_pr, 2) + pow2(dist_ot, 2));
     if ((line_width + 1) / 2 - korrect_dist > 0) {
         return min((line_width + 1) / 2 - dist_pr, 1 - dist_ot);
     }
@@ -119,7 +120,7 @@ void draw(unsigned char* arr_pixels, int &widht, int &height, int &brightness, d
         len_y = ABS;
         y2 += ABS;
     }
-    double len = sqrt(pow(len_x, 2) + pow(len_y, 2));
+    double len = sqrt(pow2(len_x, 2) + pow2(len_y, 2));
     double fx = len_x / len, fy = len_y / len;
 
     double s_line_w = line_width;
@@ -155,20 +156,9 @@ int main(int argc, char * argv[]) {
     double x2 = atof(argv[7]);
     double y2 = atof(argv[8]);
     double line_w, line_g;
-    string str4 = argv[4];
-    char s4 [str4.size()] = "";
-    for (int i = 0; i < str4.size(); ++i) {
-        s4[i] = str4[i];
-    }
-
-    line_w = strtod(s4, 0);
+    line_w = atof(argv[4]);
     if (argv[9] != NULL) {
-        string str9 = argv[9];
-        char s9[str9.size()] = "";
-        for (int i = 0; i < str9.size(); ++i) {
-            s9[i] = str9[i];
-        }
-        line_g = strtod(s9, 0);
+        line_g = atof(argv[9]);
     } else {
         line_g = 2;
     }
@@ -205,7 +195,7 @@ int main(int argc, char * argv[]) {
         return 1;
     }
 
-   // brightness = 255 * pow((brightness + 0.0) / 255, 2);
+   // brightness = 255 * pow2((brightness + 0.0) / 255, 2);
     draw(arr_pixels, widht, height, brightness, x1, y1, x2, y2, line_w, line_g);
 
     fprintf(output_file, "P%i\n%i %i\n%i\n", a, widht, height, gamma);
