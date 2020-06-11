@@ -54,25 +54,30 @@ void counter(int& now_s_x, int& now_s_y, double& dist, int& brightness, unsigned
     if ((now_s_x >= 0) && (now_s_x < widht) && (now_s_y >= 0) && (now_s_y < height)) {
         double pix = arr_pix[now_s_y * widht +  now_s_x] / 255.0, br = brightness / 255.0;
         double s2, s;
-        if (pix <= 0.04045) {
-            s = 25 * pix / 323;
-        } else {
-            s = pow((200 * pix + 11) / 211, line_gamma);
-        }
-        if (br <= 0.04045) {
-            s2 = 25 * br / 323;
-        } else {
-            s2 = pow((200 * br + 11) / 211, line_gamma);
-        }
+        if (line_gamma == 2.4) {
+            if (pix <= 0.04045) {
+                s = 25 * pix / 323;
+            } else {
+                s = pow((200 * pix + 11) / 211, line_gamma);
+            }
+            if (br <= 0.04045) {
+                s2 = 25 * br / 323;
+            } else {
+                s2 = pow((200 * br + 11) / 211, line_gamma);
+            }
 
-        double final = s * (1 - dist) + s2 * dist;
-        double fin_pix;
-        if (final <= 0.0031308) {
-            fin_pix = 323 * final / 25;
-        } else {
-            fin_pix = (211 * pow(final, (1 / line_gamma)) - 11) / 200;
+            double final = s * (1 - dist) + s2 * dist;
+            double fin_pix;
+            if (final <= 0.0031308) {
+                fin_pix = 323 * final / 25;
+            } else {
+                fin_pix = (211 * pow(final, (1 / line_gamma)) - 11) / 200;
+            }
+            arr_pix[now_s_y * widht + now_s_x] = round(fin_pix * 255);
         }
-        arr_pix[now_s_y * widht + now_s_x] = round(fin_pix * 255);
+        else {
+            arr_pix[now_s_y * widht + now_s_x] = 255 * pow(pix, line_gamma);
+        }
     }
 }
 
@@ -160,7 +165,7 @@ int main(int argc, char * argv[]) {
     if (argv[9] != NULL) {
         line_g = atof(argv[9]);
     } else {
-        line_g = 2;
+        line_g = 2.4;
     }
 
 
@@ -195,12 +200,12 @@ int main(int argc, char * argv[]) {
         return 1;
     }
 
-   // brightness = 255 * pow2((brightness + 0.0) / 255, 2);
+    // brightness = 255 * pow2((brightness + 0.0) / 255, 2);
     draw(arr_pixels, widht, height, brightness, x1, y1, x2, y2, line_w, line_g);
 
     fprintf(output_file, "P%i\n%i %i\n%i\n", a, widht, height, gamma);
     fwrite(arr_pixels, sizeof(unsigned char), widht * height, output_file);
-    
+
     free(arr_pixels);
     fclose(output_file);
     fclose(input_file);
